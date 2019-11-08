@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <video class="uk-align-center uk-hidden-touch uk-margin-remove" src="../static/video/slomo.mp4" loop muted playsinline
+           uk-video="autoplay: inview"></video>
+
+    <div style="e-webkit-box-shadow: 0 4px 6px -6px #222;
+  -moz-box-shadow: 0 4px 6px -6px #222;
+  box-shadow: 0 4px 6px -6px #222;">
+        <div class="uk-align-center">
+            <form style="width: 100%" class="uk-search uk-search-large" method="POST" action="">
+                {% csrf_token %}
+                <span uk-search-icon></span>
+                {{ form.where_load }}
+            </form>
+        </div>
+    </div>
+
+    {% if venues %}
+        <div style="margin: 10%">
+            {% for venue in venues %}
+                <div class="uk-card uk-card-default uk-card-body">
+                    <h3 class="uk-card-title">{{ venue.name }}, {{ venue.rating }} / 5 &#9733;</h3>
+                    <div class="uk-card-body">
+                        <h3>{{ venue.address }}</h3>
+                        <h3>{{ venue.current_popularity }}</h3>
+{#                        <h3>{{ venue.wait_time }}</h3>#}
+                        <p class="card-text">
+                            <a href="" class="button fit" style="cursor: pointer; outline: 0;">More Info</a>
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if venues.has_other_pages %}
+            <ul class="pagination uk-pagination uk-flex-center">
+                {% if venues.has_previous %}
+                    <li><a href="?search={{ search }}&page={{ venues.previous_page_number }}">&laquo;</a></li>
+                {% else %}
+                    <li class="disabled"><span>&laquo;</span></li>
+                {% endif %}
+                {% for i in venues.paginator.page_range %}
+                    {% if venues.number == i %}
+                        <li class="active"><span>{{ i }} <span class="sr-only"></span></span></li>
+                    {% else %}
+                        <li><a href="?search={{ search }}&page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if venues.has_next %}
+                    <li><a href="?search={{ search }}&page={{ venues.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                    <li class="disabled"><span>&raquo;</span></li>
+                {% endif %}
+            </ul>
+        {% endif %}
+
+        <hr class="uk-divider-icon">
+    {% endif %}
+
+
+
+
+{% endblock %}

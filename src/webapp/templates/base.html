@@ -1,0 +1,84 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'css/uikit.css' %}">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <script src="{% static 'js/uikit.js' %}"></script>
+    <script src="{% static 'js/uikit-icons.js' %}"></script>
+    <link rel="shortcut icon" href="{% static 'images/nyte.ico' %}"/>
+
+
+    <script>
+        function initAutocomplete() {
+            console.log("Init Autocomplete");
+            autocomplete = new google.maps.places.Autocomplete(
+                document.getElementById('autocomplete'), {types: ['geocode']});
+            autocomplete.setFields(['address_component']);
+            {#autocomplete.addListener('place_changed', fillInAddress);#}
+        }
+
+        function geolocate() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var geolocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    var circle = new google.maps.Circle({
+                        center: geolocation,
+                        radius: position.coords.accuracy
+                    });
+                    autocomplete.setBounds(circle.getBounds());
+                });
+            }
+        }
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&libraries=places&callback=initAutocomplete"
+            async
+            defer></script>
+    <title>Nyte</title>
+</head>
+<body>
+
+
+<div class="uk-position-relative">
+    <div class="uk-position-top">
+        <nav class="uk-navbar-container uk-navbar-transparent" uk-navbar>
+            <img style="width: 100px; height: 50px;" src="{% static 'images/nyte.ico' %}"
+                 class="uk-navbar-item uk-logo">
+            <div class="uk-navbar-left">
+                <ul class="uk-navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    {% if request.user.is_authenticated == False %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login/auth0">Log In</a>
+                        </li>
+                    {% endif %}
+                    {% if request.user.is_authenticated == True %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/profile">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">Log Out</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+        <div class="container px-2">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+</div>
+</body>
+
+</html>
